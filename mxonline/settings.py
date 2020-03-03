@@ -40,10 +40,12 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+
 	'users',
 	'courses',
 	'organization',
 	'operation',
+
 	'xadmin',
 	'crispy_forms',
 	'captcha',
@@ -132,3 +134,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'static'),
 )
+
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = '415441075@qq.com'
+EMAIL_HOST_PASSWORD = 'A86741860a'
+EMAIL_USE_TLS = False
+EMAIL_FROM = '415441075@qq.com'
