@@ -80,7 +80,7 @@
                         <input name="password" id="password_l" type="password" placeholder="请输入您的密码"/>
                     </div>
                     <div class="error btns login-form-tips" id="jsLoginTips">
-                        {% if login_form == '用户名或密码错误!!!' %}
+                        {% if login_form == '用户名或密码错误!!!' or login_form == '用户未激活'%}
                             {{ login_form }}
                         {% else %}
                             {% for key,error in login_form.errors.items %}{{ error }}{% endfor %}
@@ -89,12 +89,12 @@
 
             <div class="auto-box marb38 ">
                 {#                        <label><input type="checkbox" id="jsAutoLogin"> 自动登录</label>#}
-                <a class="fr" href="forgetpwd.html">忘记密码？</a>
+                <a class="fr" href="{% url 'forget_pwd' %}">忘记密码？</a>
             </div>
             <input class="btn btn-green" id="jsLoginBtn" type="submit" value="立即登录 > "/>
             {% csrf_token %}
             </form>
-            <p class="form-p">没有慕学网帐号？<a href="register.html">[立即注册]</a></p>
+            <p class="form-p">没有慕学网帐号？<a href="{% url 'register' %}">[立即注册]</a></p>
         </div>
     </div>
     </div>

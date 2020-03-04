@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3 class="no-margins">重置修改</h3>
+<p class="m-t-md">密码重置修改</p>
+<form method="post" action="{% url 'modify_pwd' %}" autocomplete="off">
+    <ul>
+        <li>
+            <div class="form-group marb20 {% if modif_Form.errors.password1 %}errorput{% endif %}">
+                <input name='password1' type="password" class="form-control pword m-b" placeholder="密码"/>
+                <span class="help-block m-b-none"> </span>
+            </div>
+        </li>
+        <input name='email' type="hidden" value="{{ email }}"/>
+        <li>
+            <input name='password2' type="password" class="form-control pword m-b" placeholder="重复密码"/>
+            <span class="help-block m-b-none"> </span>
+
+        </li>
+        <li>
+            <button type="submit" class="btn btn-success btn-block">修 改</button>
+
+        </li>
+        <div class="error btns" id="jsForgetTips">
+            {% for key,error in modif_Form.errors.items %}{{ error }}{% endfor %} {{ msg }}</div>
+    </ul>
+
+
+    </div>
+
+    <a href="{% url 'login' %}">返回登录</a>
+    {% csrf_token %}
+</form>
+</body>
+</html>
