@@ -15,8 +15,8 @@ import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))  # 配置app总存放路径
+sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))  # 配置xadmin总存放路径
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -27,12 +27,15 @@ SECRET_KEY = '4zi@*g^mp#gpy)ft(v%sd+$*orgr7^@!$7aaw%6n_exl6bnzul'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# 设置邮箱和用户名均可登录
 AUTHENTICATION_BACKENDS = (
 	'users.views.CustomBackend',
 
 )
 # Application definition
 
+# 配置app
 INSTALLED_APPS = [
 	'django.contrib.admin',
 	'django.contrib.auth',
@@ -46,11 +49,13 @@ INSTALLED_APPS = [
 	'organization',
 	'operation',
 
-	'xadmin',
-	'crispy_forms',
-	'captcha',
+	'xadmin',  # xadmin
+	'crispy_forms',  # xadmin
+	'captcha',  # 验证码
+	'pure_pagination'  # 分页
 ]
 
+# 此处重载是为了使我们的UserProfile生效，相当于使用UserProfile替换User表使用
 AUTH_USER_MODEL = 'users.UserProfile'
 
 MIDDLEWARE = [
@@ -76,6 +81,9 @@ TEMPLATES = [
 				'django.template.context_processors.request',
 				'django.contrib.auth.context_processors.auth',
 				'django.contrib.messages.context_processors.messages',
+				# 在django2.0 media配置路径以改变 'django.core.context_processors.media',
+				# 上下文处理器用于在urls.py import MEDIA_ROOT
+				'django.template.context_processors.media',
 			],
 		},
 	},
@@ -85,7 +93,7 @@ WSGI_APPLICATION = 'mxonline.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
+# 配置数据库
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
@@ -117,27 +125,44 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
+# 修改中午显示
 LANGUAGE_CODE = 'zh-hans'
-
+# 时区改为上海
 TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
+# USE_TZ = True数据库存储使用时间，True时间会被存为UTC的时间
 USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+# 设置静态资源路径
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, 'static'),
-)
+]
 
-EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PORT = 25
+# 设置我们上传文件的路径
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 在标准输出中输出e-mail内容来代替通过SMTP服务发送邮件
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# 配置发送发送邮箱
+EMAIL_HOST = 'smtp.qq.com'  # smtp地址
+EMAIL_PORT = 25  # smtp端口
 EMAIL_HOST_USER = '415441075@qq.com'
-EMAIL_HOST_PASSWORD = 'eokikhsbkekzbhhd'
+EMAIL_HOST_PASSWORD = 'eokikhsbkekzbhhd'  # 授权码
 EMAIL_USE_TLS = False
-EMAIL_FROM = '415441075@qq.com'
+EMAIL_FROM = '415441075@qq.com'  # 一般为登录用户，也就是=EMAIL_HOST_USER
+
+# 分页管理器
+PAGINATION_SETTINGS = {
+	'PAGE_RANGE_DISPLAYED': 5,  # 是总共会显示多少个page。(包括省略号，包括两边和中间)
+	'MARGIN_PAGES_DISPLAYED': 2,  # 是总共会显示多少个page。(包括省略号，包括两边和中间)
+	'SHOW_FIRST_PAGE_WHEN_INVALID': True,  # 当输入页数不合法是否要跳到第一页
+}

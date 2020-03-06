@@ -13,16 +13,22 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(forms.Form):
+	# 此处email与前端name需保持一致
 	email = forms.EmailField(required=True)
 	password = forms.CharField(required=True, min_length=5)
+	# 应用验证码
+	# 如果验证码错误提示是英文，可以在括号内加入 error_messages={'invalid': '验证码错误'}
 	captcha = CaptchaField()
 
 
+# 忘记密码表单
 class ForgetForm(forms.Form):
 	email = forms.EmailField(required=True)
 	captcha = CaptchaField()
 
-
+# 重置密码form实现
 class ModifyPwdForm(forms.Form):
+	# 密码不能小于5位
 	password1 = forms.CharField(required=True, min_length=5)
+	# 密码不能小于5位
 	password2 = forms.CharField(required=True, min_length=5)

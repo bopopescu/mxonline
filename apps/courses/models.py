@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 # Create your models here.
-
+# 课程信息表
 class Course(models.Model):
 	name = models.CharField(max_length=50, verbose_name='课程名')
 	desc = models.CharField(max_length=300, verbose_name='课程描述')
@@ -19,22 +19,29 @@ class Course(models.Model):
 	class Meta:
 		verbose_name = '课程'
 		verbose_name_plural = verbose_name
+
 	def __str__(self):
 		return self.name
 
+
+# 课程章节
 class Lesson(models.Model):
-	course = models.ForeignKey(Course,on_delete=models.CASCADE,verbose_name='课程')
-	name = models.CharField(max_length=100,verbose_name='章节名')
-	add_time = models.DateTimeField(default=datetime.now,verbose_name='添加时间')
+	# 在引用外键是要添加on_delete=models.CASCADE否则会报错
+	course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='课程')
+	name = models.CharField(max_length=100, verbose_name='章节名')
+	add_time = models.DateTimeField(default=datetime.now, verbose_name='添加时间')
 
 	class Meta:
 		verbose_name = '章节'
 		verbose_name_plural = verbose_name
-	def __str__(self):
-		return self.name
 
+	def __str__(self):
+		return '课程 ' + self.course.name + '的章节：' + self.name
+
+
+# 课程视频
 class Video(models.Model):
-	lesson = models.ForeignKey(Lesson,on_delete=models.CASCADE, verbose_name='章节')
+	lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='章节')
 	name = models.CharField(max_length=100, verbose_name='视频名')
 	add_time = models.DateTimeField(default=datetime.now, verbose_name='添加时间')
 
@@ -43,10 +50,12 @@ class Video(models.Model):
 		verbose_name_plural = verbose_name
 
 
+# 课程资源
 class CourseResource(models.Model):
-	course = models.ForeignKey(Course,on_delete=models.CASCADE, verbose_name='课程')
+	course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='课程')
 	name = models.CharField(max_length=100, verbose_name='名称')
-	download = models.FileField(max_length=100,upload_to='course/resource/%y/%m',verbose_name='资源文件')
+	# 下载的是文件，需要用到文件下载FileField，在后台管理中会自动生成文件上传的按钮
+	download = models.FileField(max_length=100, upload_to='course/resource/%y/%m', verbose_name='资源文件')
 	add_time = models.DateTimeField(default=datetime.now, verbose_name='添加时间')
 
 	class Meta:

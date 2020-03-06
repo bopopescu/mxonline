@@ -13,6 +13,7 @@ from .forms import RegisterForm
 from utils.email_send import send_register_email
 
 
+# 重新复写认证方法
 class CustomBackend(ModelBackend):
 	"""
 	重新复写认证方法
@@ -20,15 +21,20 @@ class CustomBackend(ModelBackend):
 	user = UserProfile.objects.get(Q(username=username) | Q(email=username))
 	"""
 
+	# 不希望用户存在两个，get只能有一个。两个是get失败的一种原因 Q为使用并集查询
 	def authenticate(self, request, username=None, password=None, **kwargs):
 		try:
 			user = UserProfile.objects.get(Q(username=username) | Q(email=username))
+			# django的后台中密码加密：所以不能password==password
+			# UserProfile继承的AbstractUser中有def check_password(self, raw_password)
+
 			if user.check_password(password):  # 数据库中密码进行解密与传进来的password比较
 				return user
 		except Exception as e:
 			return None
 
 
+# 用户登录视图
 class LoginView(View):
 	"""
 	用户登录
@@ -42,19 +48,20 @@ class LoginView(View):
 		if login_form.is_valid():
 			user_name = request.POST.get('username', '')
 			pass_word = request.POST.get('password', '')
-			user = authenticate(username=user_name, password=pass_word)
+			user = authenticate(username=user_name, password=pass_word)  # 认证成功返回user对象，失败返回null
 			if user is not None:
 				if user.is_active:  # 判断此用户是否应被视为活动用户
 					login(request, user)  # 在请求中持久化用户id和后端。这样，用户就不必对每个请求进行重新处理。注意，匿名会话期间的数据集在用户登录时被保留。
 					return render(request, 'index.html')
 				else:
-					return render(request, 'login.html', {'login_form': '用户未激活'})
+					return render(request, 'login.html', {'msg': '用户未激活'})
 			else:
-				return render(request, 'login.html', {'login_form': '用户名或密码错误!!!'})
+				return render(request, 'login.html', {'msg': '用户名或密码错误!!!'})
 		else:
 			return render(request, 'login.html', {'login_form': login_form})
 
 
+# 用户注册视图
 class RegisterView(View):
 	"""
 	用户注册
@@ -84,11 +91,12 @@ class RegisterView(View):
 
 			send_register_email(user_name, 'register')  # 调用发送邮件激活用户
 
-			return render(request, 'login.html')
+			return render(request, 'login.html', {'msg': '请查收邮件激活用户'})
 		else:
 			return render(request, 'register.html', {'register_form': register_form})
 
 
+# 激活用户视图
 class AciveUserView(View):
 	"""
 	激活用户
@@ -106,9 +114,10 @@ class AciveUserView(View):
 				user.save()
 		else:
 			return render(request, 'active_fail.html')  # 跳转激活失败页面
-		return render(request, 'login.html')
+		return render(request, 'login.html', {'msg': '用户以激活请登录'})
 
 
+# 忘记密码视图
 class ForgetPwdView(View):
 	"""
 	忘记密码
@@ -129,6 +138,7 @@ class ForgetPwdView(View):
 			return render(request, 'forgetpwd.html', {'forget_form': forget_form})
 
 
+# 重置密码get方法视图
 class ResetView(View):
 	"""
 	（涉及到跳转页面传递active_code参数如果把get和post写到一个类里
@@ -147,6 +157,7 @@ class ResetView(View):
 			return render(request, 'active_fail.html')
 
 
+# 重置密码post方法视图
 class ModifyPwdView(View):
 	"""
 	重置密码post方法
@@ -159,6 +170,7 @@ class ModifyPwdView(View):
 			pwd1 = request.POST.get('password1', '')
 			pwd2 = request.POST.get('password2', '')
 			email = request.POST.get('email', '')
+			# 如果两次密码不相等，返回错误信息
 			if pwd1 != pwd2:
 				return render(request, 'pwdreset.html', {'email': email, 'msg': '密码不一致请重新输入'})
 			else:
