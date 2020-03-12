@@ -11,9 +11,11 @@
                         <li>
                             <h2>课程类别</h2>
                             <div class="cont">
-                                <a href="?category=&city={{ city_id }}"><span {% if category_id == '' %}class="active2"{% endif %}>全部</span></a>
+                                <a href="?category=&city={{ city_id }}"><span
+                                        {% if category_id == '' %}class="active2"{% endif %}>全部</span></a>
                                 {% for category in all_category %}
-                                    <a href="?category={{ category.code }}&city={{ city_id }}"><span {% ifequal category.code category_id %}class="active2"{% endifequal %}>{{ category.explain }}</span></a>
+                                    <a href="?category={{ category.code }}&city={{ city_id }}"><span
+                                            {% ifequal category.code category_id %}class="active2"{% endifequal %}>{{ category.explain }}</span></a>
                                 {% endfor %}
 
                             </div>
@@ -23,7 +25,8 @@
                             <div class="more">更多</div>
                             <div class="cont">
 
-                                <a href="?category={{ category_id }}&city="><span{% if city_id == '' %} class="active2" {% endif %}>全部</span></a>
+                                <a href="?category={{ category_id }}&city="><span{% if city_id == '' %}
+                                    class="active2" {% endif %}>全部</span></a>
                                 {% for city in all_citys %}
                                     <a href="?city={{ city.id }}&category={{ category_id }}"><span
                                             {% ifequal city_id city.id|stringformat:'i' %}class="active2"{% endifequal %}>{{ city.name }}</span></a>
@@ -38,9 +41,14 @@
                     <div class="layout">
                         <div class="head">
                             <ul class="tab_header">
-                                <li class="{% if sort == '' %}active{% endif %}"><a href="?sort=&category={{ category_id }}&city={{ city_id }}">全部</a></li>
-                                <li><a class="{% if sort == 'students' %}active{% endif %}" href="?sort=students&category={{ category_id }}&city={{ city_id }}">学习人数 &#8595;</a></li>
-                                <li><a class="{% if sort == 'courses' %}active{% endif %}" href="?sort=courses&category={{ category_id }}&city={{ city_id }}">课程数 &#8595;</a></li>
+                                <li class="{% if sort == '' %}active{% endif %}"><a
+                                        href="?sort=&category={{ category_id }}&city={{ city_id }}">全部</a></li>
+                                <li><a class="{% if sort == 'students' %}active{% endif %}"
+                                       href="?sort=students&category={{ category_id }}&city={{ city_id }}">学习人数
+                                    &#8595;</a></li>
+                                <li><a class="{% if sort == 'courses' %}active{% endif %}"
+                                       href="?sort=courses&category={{ category_id }}&city={{ city_id }}">课程数
+                                    &#8595;</a></li>
                             </ul>
                         </div>
 
@@ -125,10 +133,12 @@
                     </div>
                     <div>
                         <img src="{% static 'images/rightform3.png' %}"/>
-                        <input type="text" name="address" id="companyAddress" placeholder="课程名" maxlength="50"/>
+                        <input type="text" name="course_name" id="companyAddress" placeholder="课程名" maxlength="50"/>
                     </div>
                     <p class="error company-tips" id="jsCompanyTips"></p>
-                    <input class="btn" type="text" id="jsStayBtn" value="立即咨询 >"/>
+                    <p id="j" ></p>
+                    <input class="btn" type="button" id="jsStayBtn" value="立即咨询 >"/>
+                    {% csrf_token %}
                 </form>
             </div>
 
@@ -146,4 +156,39 @@
             </div>
         </div>
     </section>
+{% endblock %}
+
+
+{% block custom_js %}
+    <script>
+        $(function () {
+            $('#jsStayBtn').on('click', function () {
+
+                $.ajax({
+                    cache: false,
+                    {#请求类型#}
+                    type: "POST",
+                    {#指定调用url地址#}
+                    url: "{% url "org:add_ask" %}",
+                    {#格式化表单#}
+                    data: $('#jsStayForm').serialize(),
+                    dataType: 'json',
+                    async: false,
+
+                    {#放回方法#}
+                    success: function (data) {
+                        if (data.status123 == 'success') {
+                            {#$('#jsStayForm')[0].reset();#}
+                            $('#j').html(data.msg);
+                        } else if (data.status123 == 'fail') {
+
+                            $('#j').html(data.msg);
+                        }
+                    },
+                });
+                {#return false;#}
+            });
+        })
+
+    </script>
 {% endblock %}

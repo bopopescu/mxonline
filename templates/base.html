@@ -6,13 +6,13 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <title>{% block title %}课程机构列表 - 慕学网{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="{% static '' %}css/reset.css">
-    <link rel="stylesheet" type="text/css" href="{% static '' %}css/animate.css">
-    <link rel="stylesheet" type="text/css" href="{% static '' %}css/style.css">
-    <link rel="stylesheet" type="text/css" href="{% static '' %}js/plugins/queryCity/css/cityLayout.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'js/plugins/queryCity/css/cityLayout.css' %}">
     {% block custom_css %}{% endblock %}
-    <script src="{% static '' %}js/jquery.min.js" type="text/javascript"></script>
-    <script src="{% static '' %}js/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+    <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
     {% block custom_js %}{% endblock %}
 </head>
 <body>
@@ -24,8 +24,10 @@
                     <div class="fl"><p>服务电话：<b>33333333</b></p></div>
                     <!--登录后跳转-->
 
-                    <div class="fr registerbtn"><a style="color:white" class="fr registerbtn" href="{% url 'register' %}">注册</a></div>
-                    <div class="fr loginbtn"><a style="color:white" class="fr loginbtn" href="{% url 'login' %}">登录</a></div>
+                    <div class="fr registerbtn"><a style="color:white" class="fr registerbtn"
+                                                   href="{% url 'register' %}">注册</a></div>
+                    <div class="fr loginbtn"><a style="color:white" class="fr loginbtn" href="{% url 'login' %}">登录</a>
+                    </div>
 
                 </div>
             </div>
@@ -555,7 +557,7 @@
             </div>
             <div class="right companyright">
                 <div class="head">我要学习</div>
-                <form class="rightform" id="jsStayForm">
+                <form role="form" class="rightform" id="jsStayForm" method="post" autocomplete="off">
                     <div>
                         <img src="{% static 'images/rightform1.png' %}"/>
                         <input type="text" name="name" id="companyName" placeholder="名字" maxlength="25"/>
@@ -569,7 +571,8 @@
                         <input type="text" name="address" id="companyAddress" placeholder="课程名" maxlength="50"/>
                     </div>
                     <p class="error company-tips" id="jsCompanyTips"></p>
-                    <input class="btn" type="text" id="jsStayBtn" value="立即咨询 >"/>
+                    <input class="btn" type="submit" id="jsStayBtn" value="立即咨询 >"/>
+                    {% csrf_token %}
                 </form>
             </div>
 
@@ -681,62 +684,64 @@
 <script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
 <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
 <script src="{% static 'js/plugins/queryCity/js/public.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/unslider.js" type="text/javascript' %}"></script>
+{#<script src="{% static 'js/unslider.js" type="text/javascript' %}"></script>#}
 <script src="{% static 'js/plugins/jquery.scrollLoading.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/validateDialog.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/deco-common.js' %}" type="text/javascript"></script>
 
-<script>
-    $(function () {
-        $('#jsStayBtn').on('click', function () {
-            var _this = $(this);
-            verify = verifyDialogSubmit(
-                [
-                    {id: '#companyName', tips: Dml.Msg.epComName, errorTips: '', require: true},
-                    {
-                        id: '#companyMobile',
-                        tips: Dml.Msg.epPhone,
-                        errorTips: Dml.Msg.erPhone,
-                        regName: 'phone',
-                        require: true
-                    },
-                    {id: '#companyAddress', tips: Dml.Msg.epComAddress, require: true}
-                ]
-            );
-            if (!verify) {
-                return;
-            }
-            $.ajax({
-                cache: false,
-                type: "POST",
-                url: "/company/company_apply/",
-                data: $('#jsStayForm').serialize(),
-                async: true,
-                beforeSend: function (xhr, settings) {
-                    _this.val("提交中...")
-                    _this.attr("disabled", "disabled");
-                    xhr.setRequestHeader("X-CSRFToken", "mymQDzHWl2REXIfPMg2mJaLqDfaS1sD5");
-                },
-                success: function (data) {
-                    if (data.status == 'success') {
-                        $('#jsStayForm')[0].reset();
-                        Dml.fun.showTipsDialog({
-                            title: '提交成功',
-                            h2: '您的入住申请提交成功!',
-                        });
-                        Dml.fun.winReload();
-                    } else if (data.status == 'failure') {
-                        $('#jsCompanyTips').html(data.error_msg).show();
-                    }
-                },
-                complete: function (XMLHttpRequest) {
-                    _this.val("立即申请 >");
-                    _this.removeAttr("disabled");
-                }
-            });
-        });
-    })
-</script>
+{#{% block custom_js %}#}
+{#    <script>#}
+{#        $(function () {#}
+{#            $('#jsStayBtn').on('click', function () {#}
+{#                var _this = $(this);#}
+{#                verify = verifyDialogSubmit(#}
+{#                    [#}
+{#                        {id: '#companyName', tips: Dml.Msg.epComName, errorTips: '', require: true},#}
+{#                        {#}
+{#                            id: '#companyMobile',#}
+{#                            tips: Dml.Msg.epPhone,#}
+{#                            errorTips: Dml.Msg.erPhone,#}
+{#                            regName: 'phone',#}
+{#                            require: true#}
+{#                        },#}
+{#                        {id: '#companyAddress', tips: Dml.Msg.epComAddress, require: true}#}
+{#                    ]#}
+{#                );#}
+{#                if (!verify) {#}
+{#                    return;#}
+{#                }#}
+{#                $.ajax({#}
+{#                    cache: false,#}
+{#                    type: "POST",#}
+{#                    url: "/company/company_apply/",#}
+{#                    data: $('#jsStayForm').serialize(),#}
+{#                    async: true,#}
+{#                    beforeSend: function (xhr, settings) {#}
+{#                        _this.val("提交中...")#}
+{#                        _this.attr("disabled", "disabled");#}
+{#                        xhr.setRequestHeader("X-CSRFToken", "mymQDzHWl2REXIfPMg2mJaLqDfaS1sD5");#}
+{#                    },#}
+{#                    success: function (data) {#}
+{#                        if (data.status == 'success') {#}
+{#                            $('#jsStayForm')[0].reset();#}
+{#                            Dml.fun.showTipsDialog({#}
+{#                                title: '提交成功',#}
+{#                                h2: '您的入住申请提交成功!',#}
+{#                            });#}
+{#                            Dml.fun.winReload();#}
+{#                        } else if (data.status == 'failure') {#}
+{#                            $('#jsCompanyTips').html(data.error_msg).show();#}
+{#                        }#}
+{#                    },#}
+{#                    complete: function (XMLHttpRequest) {#}
+{#                        _this.val("立即申请 >");#}
+{#                        _this.removeAttr("disabled");#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{#        })#}
+{#    </script>#}
+{#{% endblock %}#}
 
 </body>
 </html>

@@ -27,10 +27,3 @@
 # 	print('Error')
 #
 
-
-list = []
-
-if list:
-	print("1111")
-else:
-	print("2222")

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+{% load static %}
+<head>
+    <title>login test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="login test">
+    <script type="text/javascript" src="{% static 'js\jquery.min.js'%}"></script>
+</head>
+
+<script type="text/javascript">
+        $(function () {
+            $("input").click(function () {
+                alert('提交成功')
+                return false;
+            });
+        })
+    </script>
+
+<body>
+<div id="form-div">
+    <form id="form1" action="" method="post">
+        <p>用户名：<input name="userName" type="text" id="txtUserName" tabindex="1" size="15" value=""/></p>
+        <p>密　码：<input name="password" type="password" id="TextBox2" tabindex="2" size="16" value=""/></p>
+        <div class="error btns" id="jsEmailTips">{{ name }}</div>
+        <div class="error btns" id="jsEmailTips">{{ password }}</div>
+        <p><input type="submit" value="登录">&nbsp<input type="reset" value="重置"></p>
+        {% csrf_token %}
+    </form>
+</div>
+</body>
+</html>
