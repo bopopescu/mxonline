@@ -9,10 +9,16 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from .models import CourseOrg, CityDict
 from .forms import UserAskForm
 
+from operation.models import UserFavorite
+
 
 # Create your views here.
-
+# 显示课程机构列表
 class OrgView(View):
+	"""
+	显示课程机构列表
+	"""
+
 	def get(self, request):
 		# 课程机构
 		all_orgs = CourseOrg.objects.all()
@@ -95,3 +101,180 @@ class AddUserAskView(View):
 			return HttpResponse(
 				json.dumps({'status123': 'fail', 'msg': '添加出错'}),
 				content_type='application/json')
+
+
+# 机构首页
+class OrgHomeView(View):
+	"""
+	机构首页
+	"""
+
+	def get(self, request, org_id):
+		# 判断导航栏选中
+		current_page = "home"
+		# 通过传过来的机构di查找机构
+		course_org = CourseOrg.objects.get(id=int(org_id))
+
+		# 用户收藏状态
+		has_fav = False
+		# 用户收藏状态
+		has_fav = False
+		# 判断用户是否登录
+		if request.user.is_authenticated:
+			# 判断用户收藏记录是否存在
+			if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
+				# 存储收藏状态变成True
+				has_fav = True
+
+		# 通过course课程modes里设置的外键
+		# org = models.ForeignKey(CourseOrg, on_delete=models.CASCADE, verbose_name='所属机构')
+		# 可以让course_org反向找出机构下所有课程内容
+		all_courses = course_org.course_set.all()[:3]
+
+		# 通过Teacher教师modes里设置的外键
+		# org = models.ForeignKey(CourseOrg, on_delete=models.CASCADE, verbose_name='所属机构')
+		# 可以让course_org反向找出机构下所有教师
+		all_teachers = course_org.teacher_set.all()[:2]
+
+		return render(request, 'org-detail-homepage.html', {
+			'all_courses': all_courses,
+			'all_teachers': all_teachers,
+			'course_org': course_org,
+			'current_page': current_page,
+			'has_fav': has_fav,
+		})
+
+
+# 机构简介
+class OrgDescView(View):
+	"""
+	机构简介
+	"""
+
+	def get(self, request, org_id):
+		# 判断导航栏选中
+		current_page = "desc"
+
+		# 通过传过来的机构di查找机构
+		course_org = CourseOrg.objects.get(id=int(org_id))
+
+		# 用户收藏状态
+		has_fav = False
+		# 判断用户是否登录
+		if request.user.is_authenticated:
+			# 判断用户收藏记录是否存在
+			if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
+				# 存储收藏状态变成True
+				has_fav = True
+
+		return render(request, 'org-detail-desc.html', {
+
+			'course_org': course_org,
+			'current_page': current_page,
+			'has_fav': has_fav,
+		})
+
+
+# 机构讲师
+class OrgTeacherView(View):
+	"""
+	机构讲师
+	"""
+
+	def get(self, request, org_id):
+		# 判断导航栏选中
+		current_page = "teacher"
+
+		# 通过传过来的机构di查找机构
+		course_org = CourseOrg.objects.get(id=int(org_id))
+		# 查找出机构下所有讲师
+		all_teachers = course_org.teacher_set.all()
+
+		# 用户收藏状态
+		has_fav = False
+		# 判断用户是否登录
+		if request.user.is_authenticated:
+			# 判断用户收藏记录是否存在
+			if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
+				# 存储收藏状态变成True
+				has_fav = True
+
+		return render(request, 'org-detail-teachers.html', {
+			'all_teachers': all_teachers,
+			'course_org': course_org,
+			'current_page': current_page,
+			'has_fav': has_fav,
+		})
+
+
+# 机构课程
+class OrgCourseView(View):
+	"""
+	机构课程
+	"""
+
+	def get(self, request, org_id):
+		# 判断导航栏选中
+		current_page = "course"
+
+		# 通过传过来的机构di查找机构
+		course_org = CourseOrg.objects.get(id=int(org_id))
+		# 查找出机构下所有课程
+		all_courses = course_org.course_set.all()
+
+		# 用户收藏状态
+		has_fav = False
+		# 判断用户是否登录
+		if request.user.is_authenticated:
+			# 判断用户收藏记录是否存在
+			if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
+				# 存储收藏状态变成True
+				has_fav = True
+
+		return render(request, 'org-detail-course.html', {
+			'all_courses': all_courses,
+			'course_org': course_org,
+			'current_page': current_page,
+			'has_fav': has_fav,
+		})
+
+
+# 用户收藏机构，用户取消收藏
+class AddFavView(View):
+	"""
+	用户收藏机构，用户取消收藏
+	"""
+
+	def post(self, request):
+		fav_id = request.POST.get('fav_id', '')
+		fav_type = request.POST.get('fav_type', '')
+
+		if not request.user.is_authenticated:
+			# 判断用户登录状态
+			return HttpResponse(
+				json.dumps({'status123': 'user_none', 'msg': '用户未登录请登录'}),
+				content_type='application/json')
+		# 查找用户对应收藏是否存在
+		exist_records = UserFavorite.objects.filter(user=request.user, fav_id=int(fav_id), fav_type=int(fav_type))
+		if exist_records:
+			# 存在删除收藏
+			exist_records.delete()
+
+			return HttpResponse(
+				json.dumps({'status123': 'fail', 'msg': '收藏'}),
+				content_type='application/json')
+		else:
+			# 不存在添加收藏
+			user_fav = UserFavorite()
+			if int(fav_id) > 0 and int(fav_type) > 0:
+				user_fav.fav_id = int(fav_id)
+				user_fav.fav_type = int(fav_type)
+				user_fav.user = request.user
+				user_fav.save()
+				return HttpResponse(
+					json.dumps({'status123': 'fail', 'msg': '已收藏'}),
+					content_type='application/json')
+			else:
+				return HttpResponse(
+					json.dumps({'status123': 'fail', 'msg': '收藏出错'}),
+					content_type='application/json')
