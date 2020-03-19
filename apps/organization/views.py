@@ -46,6 +46,7 @@ class OrgView(View):
 		sort = request.GET.get('sort', '')
 		if sort:
 			if sort == 'students':
+				# -students前边加-表示搜索出来的数据降序排列
 				all_orgs = all_orgs.order_by('-students')
 			elif sort == 'courses':
 				all_orgs = all_orgs.order_by('-course_nums')

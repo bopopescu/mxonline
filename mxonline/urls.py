@@ -22,7 +22,6 @@ from django.views.static import serve
 from users.views import LoginView, RegisterView, AciveUserView, ForgetPwdView, ResetView, ModifyPwdView
 from organization.views import OrgView
 from mxonline.settings import MEDIA_ROOT
-from test123.views import TestView
 
 urlpatterns = (
 
@@ -39,13 +38,13 @@ urlpatterns = (
 	re_path('reset/(?P<active_code>.*)/', ResetView.as_view(), name='reset_pwd'),  # 重置密码get方法
 	path('modify_pwd/', ModifyPwdView.as_view(), name='modify_pwd'),  # 重置密码post方法
 
-	# 课程机构url配置
-	path('org/', include('organization.urls', namespace='org')),
-
 	# 配置上传文件的访问处理函数
 	re_path('media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
 
+	# 课程机构url分配
+	path('org/', include('organization.urls', namespace='org')),
 
-	# # 调试测试
-	# path('test/', TestView.as_view(), name='test'),  # 重置密码post方法
+	# 课程url分配
+	path('course/', include('courses.urls', namespace='course')),
+
 )
