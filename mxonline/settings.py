@@ -26,7 +26,7 @@ SECRET_KEY = '4zi@*g^mp#gpy)ft(v%sd+$*orgr7^@!$7aaw%6n_exl6bnzul'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['172.18.17.61', '127.0.0.1']
 
 # 设置邮箱和用户名均可登录
 AUTHENTICATION_BACKENDS = (

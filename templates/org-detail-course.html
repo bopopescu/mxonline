@@ -7,10 +7,10 @@
         <div class="head">
             <h1>机构课程</h1>
         </div>
-        {% for all_cours in all_courses %}
 
-            <div class="brief group_list">
 
+        <div class="brief group_list">
+            {% for all_cours in all_courses %}
                 <div class="module1_5 box">
                     <a class="comp-img-box" href="/group/groupdetail/13/">
 
@@ -29,9 +29,8 @@
                         </span>
                     </div>
                 </div>
-            </div>
-
-        {% endfor %}
+            {% endfor %}
+        </div>
 
 
         <div class="pageturn">

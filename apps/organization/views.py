@@ -253,7 +253,7 @@ class AddFavView(View):
 		if not request.user.is_authenticated:
 			# 判断用户登录状态
 			return HttpResponse(
-				json.dumps({'status123': 'user_none', 'msg': '用户未登录请登录'}),
+				json.dumps({'status': 'user_none', 'msg': '用户未登录请登录'}),
 				content_type='application/json')
 		# 查找用户对应收藏是否存在
 		exist_records = UserFavorite.objects.filter(user=request.user, fav_id=int(fav_id), fav_type=int(fav_type))
@@ -262,7 +262,7 @@ class AddFavView(View):
 			exist_records.delete()
 
 			return HttpResponse(
-				json.dumps({'status123': 'fail', 'msg': '收藏'}),
+				json.dumps({'status': 'fail', 'msg': '收藏'}),
 				content_type='application/json')
 		else:
 			# 不存在添加收藏
@@ -273,9 +273,9 @@ class AddFavView(View):
 				user_fav.user = request.user
 				user_fav.save()
 				return HttpResponse(
-					json.dumps({'status123': 'fail', 'msg': '已收藏'}),
+					json.dumps({'status': 'fail', 'msg': '已收藏'}),
 					content_type='application/json')
 			else:
 				return HttpResponse(
-					json.dumps({'status123': 'fail', 'msg': '收藏出错'}),
+					json.dumps({'status': 'fail', 'msg': '收藏出错'}),
 					content_type='application/json')

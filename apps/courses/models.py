@@ -17,11 +17,21 @@ class Course(models.Model):
 	fav_nums = models.IntegerField(default=0, verbose_name='收藏人数')
 	image = models.ImageField(max_length=100, upload_to='courses/%y/%m', verbose_name='封面图片')
 	click_nums = models.IntegerField(default=0, verbose_name='点击数')
+	category = models.CharField(default='后端开发', max_length=20, verbose_name='课程类别')
+	tag = models.CharField(default='基础知识学习', max_length=20, verbose_name='课程标签')
 	add_time = models.DateTimeField(default=datetime.now, verbose_name='添加时间')
 
 	class Meta:
 		verbose_name = '课程'
 		verbose_name_plural = verbose_name
+
+	def get_zj_nums(self):
+		# 获取课程章节数量
+		return self.lesson_set.all().count()
+
+	def get_learn_users(self):
+		# 获取课程章节数量
+		return self.usercourse_set.all()[:5]
 
 	def __str__(self):
 		return self.name
